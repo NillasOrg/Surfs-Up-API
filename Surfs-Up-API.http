@@ -1,0 +1,6 @@
+@Surfs_Up_API_HostAddress = http://localhost:5001
+
+GET {{Surfs_Up_API_HostAddress}}
+Accept: application/json
+
+###
