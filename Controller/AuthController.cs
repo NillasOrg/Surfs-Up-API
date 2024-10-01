@@ -1,103 +1,106 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Surfs_Up_API.Models;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace Surfs_Up_API.Controller;
-
-[ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+namespace Surfs_Up_API.Controllers
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly IConfiguration _configuration; // Use to get JWT secret key
+
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _configuration = configuration;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var user = await _userManager.FindByNameAsync(model.Email.ToLower());
+
+            if (user == null)
+            {
+                return Unauthorized("Invalid credentials");
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
+
+            if (!result.Succeeded)
+            {
+                return Unauthorized("Invalid credentials");
+            }
+
+            // Generate JWT token
+            var token = GenerateJwtToken(user);
+
+            return Ok(new { token });
+        }
+        
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = new User
+            {
+                Email = model.Email.ToLower(),
+                NormalizedEmail = model.Email.ToUpper(),
+                Name = model.Name,
+                UserName = model.Email.ToLower(),
+            }; 
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "User registered successfully" });
+            }
+
+            return BadRequest(result.Errors);
+        }
+        
+        private string GenerateJwtToken(User user)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name) // Add the user's name here
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
-    
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public class RegisterModel
     {
-        // Log the incoming email for debugging
-        Console.WriteLine($"Attempting login for email: {model.Email.ToLower()}");
-
-        // Find user by normalized email
-        var user = await _userManager.FindByNameAsync(model.Email.ToLower());
-
-        if (user == null)
-        {
-            Console.WriteLine($"User with email {model.Email} not found."); // Log message for debugging
-            return Unauthorized("Invalid credentials");
-        }
-    
-        // Check password validity
-        var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
-
-        if (!result.Succeeded)
-        {
-            Console.WriteLine($"Password mismatch for user {user.Email}."); // Log message for debugging
-            return Unauthorized("Invalid credentials");
-        }
-
-        // Create claims and sign in
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Email)
-        };
-
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var authProperties = new AuthenticationProperties
-        {
-            IsPersistent = true, // Keep the user logged in
-            ExpiresUtc = DateTime.UtcNow.AddMinutes(600) // Adjust duration as needed
-        };
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-
-        return Ok(new { Message = "Logged in successfully" });
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
-
-
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        var user = new User
-        {
-            Email = model.Email.ToLower(),
-            NormalizedEmail = model.Email.ToUpper(),
-            Name = model.Name,
-            UserName = model.Email.ToLower(),
-        }; 
-
-        var result = await _userManager.CreateAsync(user, model.Password);
-
-        if (result.Succeeded)
-        {
-            return Ok(new { Message = "User registered successfully" });
-        }
-
-        return BadRequest(result.Errors);
-    }
-
-    // Additional login or authentication endpoints can be added here
 }
 
-public class RegisterModel
-{
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-}
