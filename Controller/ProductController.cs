@@ -7,89 +7,89 @@ namespace Surfs_Up_API.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductController : ControllerBase
+public class SurfboardController : ControllerBase
 {
     public readonly AppDbContext _context;
 
-    public ProductController(AppDbContext context)
+    public SurfboardController(AppDbContext context)
     {
         _context = context;
     }
     
-    // GET: api/product
+    // GET: api/surfboard
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var persons = await _context.Products.ToListAsync();
-        return Ok(persons);
+        var surfboards = await _context.Surfboards.ToListAsync();
+        return Ok(surfboards);
     }
 
-    // GET: api/product/{id}
+    // GET: api/surfboard/{id}
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var person = await _context.Products.FindAsync(id);
-        if (person == null)
+        var surfboard = await _context.Surfboards.FindAsync(id);
+        if (surfboard == null)
         {
             return NotFound();
         }
-        return Ok(person);
+        return Ok(surfboard);
     }
 
-    // POST: api/product
+    // POST: api/surfboard
     [HttpPost]
-    public async Task<IActionResult> Add([FromForm]Product product)
+    public async Task<IActionResult> Add([FromForm]Surfboard surfboard)
     {
         // Add the new person asynchronously
-        await _context.Products.AddAsync(product);
+        await _context.Surfboards.AddAsync(surfboard);
         // Save changes asynchronously
         await _context.SaveChangesAsync();
-        return Ok($"Created Person ID: {product.Id}");
+        return Ok($"Created surfboard ID: {surfboard.Id}");
     }
 
-    // PUT: api/product/{id}
+    // PUT: api/surfboard/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromForm]Product product)
+    public async Task<IActionResult> Update(int id, [FromForm]Surfboard surfboard)
     {
-        var productToUpdate = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
-        if (productToUpdate == null)
+        var boardToUpdate = await _context.Surfboards.FirstOrDefaultAsync(x => x.Id == id);
+        if (boardToUpdate == null)
         {
             return NotFound();
         }
         
         // Update fields
-        productToUpdate.Name = product.Name;
-        productToUpdate.Description = product.Description;
-        productToUpdate.Length = product.Length;
-        productToUpdate.Width = product.Width;
-        productToUpdate.Thickness = product.Thickness;
-        productToUpdate.Volume = product.Volume;
-        productToUpdate.Type = product.Type;
-        productToUpdate.Price = product.Price;
-        productToUpdate.Equipment = product.Equipment;
-        productToUpdate.ImagePath = product.ImagePath;
-        productToUpdate.Bookings = product.Bookings;
+        boardToUpdate.Name = surfboard.Name;
+        boardToUpdate.Description = surfboard.Description;
+        boardToUpdate.Length = surfboard.Length;
+        boardToUpdate.Width = surfboard.Width;
+        boardToUpdate.Thickness = surfboard.Thickness;
+        boardToUpdate.Volume = surfboard.Volume;
+        boardToUpdate.Type = surfboard.Type;
+        boardToUpdate.Price = surfboard.Price;
+        boardToUpdate.Equipment = surfboard.Equipment;
+        boardToUpdate.ImagePath = surfboard.ImagePath;
+        boardToUpdate.Bookings = surfboard.Bookings;
         
-        _context.Products.Update(productToUpdate);
+        _context.Surfboards.Update(boardToUpdate);
         await _context.SaveChangesAsync(); // Await the save operation
         
-        return Ok($"Updated Product ID: {id}");
+        return Ok($"Updated surfboard ID: {id}");
     }
 
-    // DELETE: api/product/{id}
+    // DELETE: api/surfboard/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePerson(int id)
     {
-        var person = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
-        if (person == null)
+        var surfboard = await _context.Surfboards.FirstOrDefaultAsync(x => x.Id == id);
+        if (surfboard == null)
         {
             return NotFound();
         }
         
         // Remove the person and save changes
-        _context.Products.Remove(person);
+        _context.Surfboards.Remove(surfboard);
         await _context.SaveChangesAsync(); // Await the save operation
         
-        return Ok($"Deleted Person ID: {id}");
+        return Ok($"Deleted Surfboard ID: {id}");
     }
 }
