@@ -62,7 +62,7 @@ public class BookingController : ControllerBase
         bookingToUpdate.StartDate = booking.StartDate;
         bookingToUpdate.EndDate = booking.EndDate;
         bookingToUpdate.User = booking.User;
-        bookingToUpdate.BookingItems = booking.BookingItems;
+        bookingToUpdate.Surfboards = booking.Surfboards;
         bookingToUpdate.Remark = booking.Remark;
         
 

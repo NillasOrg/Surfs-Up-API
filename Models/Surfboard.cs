@@ -2,7 +2,7 @@
 
 namespace Surfs_Up_API.Models;
 
-public class Product
+public class Surfboard
 {
     public int? Id {get; set;}
     public string? Name {get; set;}
@@ -11,14 +11,14 @@ public class Product
     public double? Width {get; set;}
     public double? Thickness {get; set;}
     public double? Volume {get; set;}
-    public CATALOGTYPE Type {get; set;}
+    public BOARDTYPE Type {get; set;}
     public double Price {get; set;}
     public string? Equipment {get; set;}
     public string? ImagePath {get; set;}
     public List<Booking>? Bookings { get; set; }
 }
 
-public enum CATALOGTYPE
+public enum BOARDTYPE
 {
     Shortboard,
     Funboard,

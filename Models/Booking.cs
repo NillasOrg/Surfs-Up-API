@@ -10,7 +10,8 @@ namespace Surfs_Up_API.Models
         public DateTime? EndDate { get; set;}
         [Required(ErrorMessage = "No Custard")]
         public User User { get; set; }
-        public List<Product>? BookingItems { get; set; }
+        public List<Surfboard>? Surfboards { get; set; }
+        public List<Wetsuit>? Wetsuits { get; set; }
         public string Remark { get; set; }
     }
 
