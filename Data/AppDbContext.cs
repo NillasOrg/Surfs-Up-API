@@ -6,7 +6,7 @@ namespace Surfs_Up_API.Data;
 
 public class AppDbContext : IdentityDbContext<User>
 {
-    public AppDbContext(DbContextOptions options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     
     public DbSet<Surfboard> Surfboards { get; set; }
     public DbSet<Wetsuit> Wetsuits { get; set; }

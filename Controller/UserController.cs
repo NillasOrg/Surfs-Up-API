@@ -37,7 +37,7 @@ namespace Surfs_Up_API.Controller
 
         //POST api/user
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromForm] User user)
+        public async Task<IActionResult> AddUser([FromBody] User user)
         {
             await appDbContext.Users.AddAsync(user);
             await appDbContext.SaveChangesAsync();
@@ -47,7 +47,7 @@ namespace Surfs_Up_API.Controller
 
         //PUT api/user/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromForm] User user)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
         {
             User userToUpdate = await appDbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
             if (userToUpdate == null)
@@ -56,7 +56,6 @@ namespace Surfs_Up_API.Controller
             }
             userToUpdate.Name = user.Name;
             userToUpdate.Email = user.Email;
-            userToUpdate.Password = user.Password;
 
             await appDbContext.SaveChangesAsync();
             return Ok($"Updated User ID: {user.Id}");

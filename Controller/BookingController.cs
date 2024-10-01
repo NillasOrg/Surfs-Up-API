@@ -9,7 +9,6 @@ namespace Surfs_Up_API.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class BookingController : ControllerBase
 {
     private readonly AppDbContext appDbContext;
@@ -41,19 +40,19 @@ public class BookingController : ControllerBase
 
     //POST api/booking
     [HttpPost]
-    public async Task<IActionResult> AddBooking([FromForm] Booking booking)
+    public async Task<IActionResult> AddBooking([FromBody] Booking booking)
     {
         await appDbContext.Bookings.AddAsync(booking);
         await appDbContext.SaveChangesAsync();
 
-        return Ok($"Created Booking ID: {booking.BookingId}");
+        return Ok($"Created Booking ID: {booking.Id}");
     }
 
     //PUT api/booking/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBooking(int id, [FromForm] Booking booking)
+    public async Task<IActionResult> UpdateBooking(int id, [FromBody] Booking booking)
     {
-        Booking bookingToUpdate = await appDbContext.Bookings.FirstOrDefaultAsync(x => x.BookingId == id);
+        Booking bookingToUpdate = await appDbContext.Bookings.FirstOrDefaultAsync(x => x.Id == id);
         if (bookingToUpdate == null)
         {
             return NotFound();
@@ -67,14 +66,14 @@ public class BookingController : ControllerBase
         
 
         await appDbContext.SaveChangesAsync();
-        return Ok($"Updated Booking ID: {booking.BookingId}");
+        return Ok($"Updated Booking ID: {booking.Id}");
     }
 
     //DELETE api/booking/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBooking(int id)
     {
-        Booking booking = await appDbContext.Bookings.FirstOrDefaultAsync(b => b.BookingId == id);
+        Booking booking = await appDbContext.Bookings.FirstOrDefaultAsync(b => b.Id == id);
         if (booking == null)
         {
             return NotFound();

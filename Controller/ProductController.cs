@@ -38,7 +38,7 @@ public class SurfboardController : ControllerBase
 
     // POST: api/surfboard
     [HttpPost]
-    public async Task<IActionResult> Add([FromForm]Surfboard surfboard)
+    public async Task<IActionResult> Add([FromBody]Surfboard surfboard)
     {
         // Add the new person asynchronously
         await _context.Surfboards.AddAsync(surfboard);
@@ -49,7 +49,7 @@ public class SurfboardController : ControllerBase
 
     // PUT: api/surfboard/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromForm]Surfboard surfboard)
+    public async Task<IActionResult> Update(int id, [FromBody]Surfboard surfboard)
     {
         var boardToUpdate = await _context.Surfboards.FirstOrDefaultAsync(x => x.Id == id);
         if (boardToUpdate == null)
