@@ -68,7 +68,6 @@ public class SurfboardController : ControllerBase
         boardToUpdate.Price = surfboard.Price;
         boardToUpdate.Equipment = surfboard.Equipment;
         boardToUpdate.ImagePath = surfboard.ImagePath;
-        boardToUpdate.Bookings = surfboard.Bookings;
         
         _context.Surfboards.Update(boardToUpdate);
         await _context.SaveChangesAsync(); // Await the save operation

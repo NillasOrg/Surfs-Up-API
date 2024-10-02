@@ -7,6 +7,11 @@ namespace Surfs_Up_API.Models
     [Index(nameof(Email), IsUnique = true)]
     public class User : IdentityUser
     {
+        /*
+         *  Identity User behøver ikke et password field,
+         *  det håndterer den selv, samt hasher passworded.
+         */
+        
         public int Id { get; set; }
         [StringLength(100)]
         [MaxLength(100, ErrorMessage = "Navn må maks være 50 tegn")]

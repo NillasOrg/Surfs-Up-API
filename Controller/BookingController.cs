@@ -22,7 +22,12 @@ public class BookingController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllBookings()
     {
-        List<Booking> bookings = await appDbContext.Bookings.ToListAsync();
+        var bookings = await appDbContext.Bookings
+            .Include(b => b.Surfboards)
+            //.Include(b => b.Wetsuits)
+            .Include(b => b.User)
+            .ToListAsync();
+        
         return Ok(bookings);
     }
 
@@ -30,7 +35,14 @@ public class BookingController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetBookingById(int id)
     {
-        Booking booking = await appDbContext.Bookings.FindAsync(id);
+        Console.WriteLine($"ID IS HERE: {id}");
+        
+        var booking = await appDbContext.Bookings.
+            Include(b => b.Surfboards)
+            //.Include(b => b.Wetsuits)
+            .Include(b => b.User)
+            .FirstOrDefaultAsync(b => b.Id == id);
+      
         if (booking == null)
         {
             return NotFound();
@@ -42,11 +54,20 @@ public class BookingController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddBooking([FromBody] Booking booking)
     {
+        foreach (var item in booking.Surfboards)
+        {
+            if (appDbContext.Surfboards.Any(c => c.Id == item.Id))
+            {
+                appDbContext.Attach(item);
+            } 
+        }
+        var user = appDbContext.Users.FirstOrDefaultAsync(a => a.Email == booking.User.Email);
+        booking.User = await user;
         await appDbContext.Bookings.AddAsync(booking);
         await appDbContext.SaveChangesAsync();
+        Console.WriteLine($"Created Booking ID: {booking.Id}");
 
-        return Ok($"Created Booking ID: {booking.Id}");
-    }
+        return Ok(booking);    }
 
     //PUT api/booking/{id}
     [HttpPut("{id}")]
@@ -79,6 +100,7 @@ public class BookingController : ControllerBase
             return NotFound();
         }
 
+        appDbContext.Bookings.Remove(booking);
         await appDbContext.SaveChangesAsync();
 
         return Ok($"Deleted Booking ID: {id}");

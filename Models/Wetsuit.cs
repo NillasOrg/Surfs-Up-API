@@ -8,7 +8,6 @@ public class Wetsuit
     public double Price { get; set; }
     public int Size { get; set; }
     public Gender Gender { get; set; }
-    public List<Booking> Bookings { get; set; }
 }
 
 public enum Gender
