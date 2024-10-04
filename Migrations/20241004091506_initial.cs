@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Surfs_Up_API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,9 +30,8 @@ namespace Surfs_Up_API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -50,43 +49,6 @@ namespace Surfs_Up_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Surfboards",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Length = table.Column<double>(type: "float", nullable: true),
-                    Width = table.Column<double>(type: "float", nullable: true),
-                    Thickness = table.Column<double>(type: "float", nullable: true),
-                    Volume = table.Column<double>(type: "float", nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    Equipment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Surfboards", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wetsuits",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wetsuits", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -199,16 +161,16 @@ namespace Surfs_Up_API.Migrations
                 name: "Bookings",
                 columns: table => new
                 {
-                    BookingId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Remark = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.BookingId);
+                    table.PrimaryKey("PK_Bookings", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Bookings_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -218,51 +180,52 @@ namespace Surfs_Up_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookingSurfboard",
+                name: "Surfboards",
                 columns: table => new
                 {
-                    BookingsBookingId = table.Column<int>(type: "int", nullable: false),
-                    SurfboardsId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Length = table.Column<double>(type: "float", nullable: true),
+                    Width = table.Column<double>(type: "float", nullable: true),
+                    Thickness = table.Column<double>(type: "float", nullable: true),
+                    Volume = table.Column<double>(type: "float", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    Equipment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BookingId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookingSurfboard", x => new { x.BookingsBookingId, x.SurfboardsId });
+                    table.PrimaryKey("PK_Surfboards", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookingSurfboard_Bookings_BookingsBookingId",
-                        column: x => x.BookingsBookingId,
+                        name: "FK_Surfboards_Bookings_BookingId",
+                        column: x => x.BookingId,
                         principalTable: "Bookings",
-                        principalColumn: "BookingId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BookingSurfboard_Surfboards_SurfboardsId",
-                        column: x => x.SurfboardsId,
-                        principalTable: "Surfboards",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookingWetsuit",
+                name: "Wetsuits",
                 columns: table => new
                 {
-                    BookingsBookingId = table.Column<int>(type: "int", nullable: false),
-                    WetsuitsId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    Size = table.Column<int>(type: "int", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    BookingId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookingWetsuit", x => new { x.BookingsBookingId, x.WetsuitsId });
+                    table.PrimaryKey("PK_Wetsuits", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookingWetsuit_Bookings_BookingsBookingId",
-                        column: x => x.BookingsBookingId,
+                        name: "FK_Wetsuits_Bookings_BookingId",
+                        column: x => x.BookingId,
                         principalTable: "Bookings",
-                        principalColumn: "BookingId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BookingWetsuit_Wetsuits_WetsuitsId",
-                        column: x => x.WetsuitsId,
-                        principalTable: "Wetsuits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -316,14 +279,14 @@ namespace Surfs_Up_API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookingSurfboard_SurfboardsId",
-                table: "BookingSurfboard",
-                column: "SurfboardsId");
+                name: "IX_Surfboards_BookingId",
+                table: "Surfboards",
+                column: "BookingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookingWetsuit_WetsuitsId",
-                table: "BookingWetsuit",
-                column: "WetsuitsId");
+                name: "IX_Wetsuits_BookingId",
+                table: "Wetsuits",
+                column: "BookingId");
         }
 
         /// <inheritdoc />
@@ -345,22 +308,16 @@ namespace Surfs_Up_API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BookingSurfboard");
+                name: "Surfboards");
 
             migrationBuilder.DropTable(
-                name: "BookingWetsuit");
+                name: "Wetsuits");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Surfboards");
-
-            migrationBuilder.DropTable(
                 name: "Bookings");
-
-            migrationBuilder.DropTable(
-                name: "Wetsuits");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

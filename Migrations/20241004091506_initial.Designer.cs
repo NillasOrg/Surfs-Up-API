@@ -12,8 +12,8 @@ using Surfs_Up_API.Data;
 namespace Surfs_Up_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241001093859_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241004091506_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,36 +24,6 @@ namespace Surfs_Up_API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BookingSurfboard", b =>
-                {
-                    b.Property<int>("BookingsBookingId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SurfboardsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookingsBookingId", "SurfboardsId");
-
-                    b.HasIndex("SurfboardsId");
-
-                    b.ToTable("BookingSurfboard");
-                });
-
-            modelBuilder.Entity("BookingWetsuit", b =>
-                {
-                    b.Property<int>("BookingsBookingId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WetsuitsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookingsBookingId", "WetsuitsId");
-
-                    b.HasIndex("WetsuitsId");
-
-                    b.ToTable("BookingWetsuit");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -190,11 +160,11 @@ namespace Surfs_Up_API.Migrations
 
             modelBuilder.Entity("Surfs_Up_API.Models.Booking", b =>
                 {
-                    b.Property<int>("BookingId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookingId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
@@ -204,14 +174,13 @@ namespace Surfs_Up_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("BookingId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -225,6 +194,9 @@ namespace Surfs_Up_API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
+
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -258,6 +230,8 @@ namespace Surfs_Up_API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BookingId");
+
                     b.ToTable("Surfboards");
                 });
 
@@ -289,7 +263,8 @@ namespace Surfs_Up_API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -298,9 +273,6 @@ namespace Surfs_Up_API.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -345,6 +317,9 @@ namespace Surfs_Up_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
@@ -356,37 +331,9 @@ namespace Surfs_Up_API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BookingId");
+
                     b.ToTable("Wetsuits");
-                });
-
-            modelBuilder.Entity("BookingSurfboard", b =>
-                {
-                    b.HasOne("Surfs_Up_API.Models.Booking", null)
-                        .WithMany()
-                        .HasForeignKey("BookingsBookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Surfs_Up_API.Models.Surfboard", null)
-                        .WithMany()
-                        .HasForeignKey("SurfboardsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BookingWetsuit", b =>
-                {
-                    b.HasOne("Surfs_Up_API.Models.Booking", null)
-                        .WithMany()
-                        .HasForeignKey("BookingsBookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Surfs_Up_API.Models.Wetsuit", null)
-                        .WithMany()
-                        .HasForeignKey("WetsuitsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -449,6 +396,27 @@ namespace Surfs_Up_API.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Surfs_Up_API.Models.Surfboard", b =>
+                {
+                    b.HasOne("Surfs_Up_API.Models.Booking", null)
+                        .WithMany("Surfboards")
+                        .HasForeignKey("BookingId");
+                });
+
+            modelBuilder.Entity("Surfs_Up_API.Models.Wetsuit", b =>
+                {
+                    b.HasOne("Surfs_Up_API.Models.Booking", null)
+                        .WithMany("Wetsuits")
+                        .HasForeignKey("BookingId");
+                });
+
+            modelBuilder.Entity("Surfs_Up_API.Models.Booking", b =>
+                {
+                    b.Navigation("Surfboards");
+
+                    b.Navigation("Wetsuits");
                 });
 #pragma warning restore 612, 618
         }

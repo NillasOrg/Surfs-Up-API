@@ -24,7 +24,7 @@ public class BookingController : ControllerBase
     {
         var bookings = await appDbContext.Bookings
             .Include(b => b.Surfboards)
-            //.Include(b => b.Wetsuits)
+            .Include(b => b.Wetsuits)
             .Include(b => b.User)
             .ToListAsync();
         
@@ -39,7 +39,7 @@ public class BookingController : ControllerBase
         
         var booking = await appDbContext.Bookings.
             Include(b => b.Surfboards)
-            //.Include(b => b.Wetsuits)
+            .Include(b => b.Wetsuits)
             .Include(b => b.User)
             .FirstOrDefaultAsync(b => b.Id == id);
       
@@ -63,6 +63,7 @@ public class BookingController : ControllerBase
         }
         var user = appDbContext.Users.FirstOrDefaultAsync(a => a.Email == booking.User.Email);
         booking.User = await user;
+        
         await appDbContext.Bookings.AddAsync(booking);
         await appDbContext.SaveChangesAsync();
         Console.WriteLine($"Created Booking ID: {booking.Id}");

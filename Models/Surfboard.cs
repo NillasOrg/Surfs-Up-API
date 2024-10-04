@@ -2,7 +2,7 @@
 
 namespace Surfs_Up_API.Models;
 
-public class Surfboard
+public class Surfboard : ICartItem
 {
     public int? Id {get; set;}
     public string? Name {get; set;}
