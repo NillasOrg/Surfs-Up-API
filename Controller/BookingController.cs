@@ -54,21 +54,36 @@ public class BookingController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddBooking([FromBody] Booking booking)
     {
+        // For hver surfboard, der er en del af bookingen, sørg for at den allerede findes i systemet.
         foreach (var item in booking.Surfboards)
         {
             if (appDbContext.Surfboards.Any(c => c.Id == item.Id))
             {
                 appDbContext.Attach(item);
-            } 
+            }
         }
-        var user = appDbContext.Users.FirstOrDefaultAsync(a => a.Email == booking.User.Email);
-        booking.User = await user;
-        
+
+        // Find den eksisterende bruger baseret på email. Hvis brugeren ikke findes, oprettes den.
+        var existingUser = await appDbContext.Users.FirstOrDefaultAsync(u => u.Email == booking.User.Email);
+
+        if (existingUser != null)
+        {
+            // Hvis brugeren findes, brug den eksisterende bruger.
+            booking.User = existingUser;
+        }
+        else
+        {
+            // Hvis brugeren ikke findes, opret en ny.
+            await appDbContext.Users.AddAsync(booking.User);
+        }
+
         await appDbContext.Bookings.AddAsync(booking);
         await appDbContext.SaveChangesAsync();
-        Console.WriteLine($"Created Booking ID: {booking.Id}");
 
-        return Ok(booking);    }
+        Console.WriteLine($"Created Booking ID: {booking.Id}");
+        return Ok(booking);
+    }
+
 
     //PUT api/booking/{id}
     [HttpPut("{id}")]
