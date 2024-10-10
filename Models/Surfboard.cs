@@ -17,7 +17,6 @@ public class Surfboard : ICartItem
     public string? ImagePath {get; set;}
     public List<Booking>? Bookings { get; set; }
 }
-
 public enum BOARDTYPE
 {
     Shortboard,

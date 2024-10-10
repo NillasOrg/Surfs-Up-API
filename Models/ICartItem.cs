@@ -2,6 +2,6 @@
 
 public interface ICartItem
 {
-    double Price { get; set; }
+    double Price {get; set;}
     
 }

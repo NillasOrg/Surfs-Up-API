@@ -121,9 +121,6 @@ public class BookingController : ControllerBase
 
         return Ok($"Deleted Booking ID: {id}");
     }
-
-
-
 }
 
 
