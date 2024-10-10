@@ -66,7 +66,7 @@ namespace Surfs_Up_API.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new { Message = "User registered successfully" });
+                return Ok(new {Message = "User registered successfully"});
             }
 
             return BadRequest(result.Errors);
@@ -99,9 +99,9 @@ namespace Surfs_Up_API.Controllers
     }
     public class RegisterModel
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Name {get; set;}
+        public string Email {get; set;}
+        public string Password {get; set;}
     }
 }
 
