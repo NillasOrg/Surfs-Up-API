@@ -23,21 +23,21 @@ namespace Surfs_Up_API.Controller
 
         //GET api/admin
         [HttpGet]
-        public async Task<IActionResult> GetAllRequestLogs()
+        public async Task<IActionResult> GetAllRequests()
         {
-            List<APIRequestLog> requestLogs = await _context.APIRequestLogs.ToListAsync();
-            return Ok(requestLogs);
+            List<Request> requests = await _context.Requests.ToListAsync();
+            return Ok(requests);
         }
 
         //POST api/admin
         [HttpPost]
-        public async Task<IActionResult> LogError(APIRequestLog request)
+        public async Task<IActionResult> LogError(Request failedRequest)
         {
-            APIRequestLog? apiRequestLog = await _context.APIRequestLogs.FirstOrDefaultAsync(x => x.IpAddress == request.IpAddress);
+            Request? request = await _context.Requests.FirstOrDefaultAsync(x => x.IpAddress == failedRequest.IpAddress);
 
-            if (apiRequestLog != null)
+            if (request != null)
             {
-                apiRequestLog.FailedRequests++;
+                request.FailedRequests++;
 
                 await _context.SaveChangesAsync();
 

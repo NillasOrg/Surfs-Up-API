@@ -8,12 +8,12 @@ using Surfs_Up_API.Data;
 using Surfs_Up_API.Models;
 using System.Threading.Tasks;
 
-public class APILogMiddleware
+public class RequestMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IServiceProvider _serviceProvider;
 
-    public APILogMiddleware(RequestDelegate next, IServiceProvider serviceProvider)
+    public RequestMiddleware(RequestDelegate next, IServiceProvider serviceProvider)
     {
         _next = next;
         _serviceProvider = serviceProvider;
@@ -28,22 +28,22 @@ public class APILogMiddleware
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            APIRequestLog? apiRequestLog = await dbContext.APIRequestLogs.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
+            Request? request = await dbContext.Requests.FirstOrDefaultAsync(x => x.IpAddress == ipAddress);
 
-            if(apiRequestLog == null)
+            if(request == null)
             {
-                apiRequestLog = new APIRequestLog
+                request = new Request
                 {
                     IpAddress = ipAddress,
                     SuccessfulRequests = 0,
                     FailedRequests = 0,
                 };
-                dbContext.APIRequestLogs.Add(apiRequestLog);
+                dbContext.Requests.Add(request);
             }
 
             if (context.Response.StatusCode >= 200 && context.Response.StatusCode < 300)
             {
-                apiRequestLog.SuccessfulRequests++;
+                request.SuccessfulRequests++;
             }
             
             await dbContext.SaveChangesAsync();
@@ -65,12 +65,12 @@ public class APILogMiddleware
 
     //            if (user != null)
     //            {
-    //                var apiRequestLog = new APIRequestLog
+    //                var request = new Request
     //                {
     //                    User = user,
     //                };
 
-    //                dbContext.APIRequestLogs.Add(apiRequestLog);
+    //                dbContext.Requests.Add(request);
     //                await dbContext.SaveChangesAsync();
     //            }
     //        }
@@ -86,7 +86,7 @@ public static class APILogMiddlewareExtensions
 {
     public static IApplicationBuilder UseAPILog(this IApplicationBuilder builder)
     {
-        return builder.UseMiddleware<APILogMiddleware>();
+        return builder.UseMiddleware<RequestMiddleware>();
     }
 }
 
