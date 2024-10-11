@@ -121,6 +121,33 @@ public class BookingController : ControllerBase
 
         return Ok($"Deleted Booking ID: {id}");
     }
+
+    // PUT: api/booking/wetsuit/{id}
+    [HttpPut("wetsuit/{id}")]
+    public async Task<IActionResult> UpdateWetsuit(int id, [FromBody] Wetsuit wetsuit)
+    {
+        if (id != wetsuit.WetsuitId)
+        {
+            return BadRequest("Wetsuit ID mismatch.");
+        }
+
+        // Find wetsuiten i databasen
+        var existingWetsuit = await appDbContext.Wetsuits.FindAsync(id);
+        if (existingWetsuit == null)
+        {
+            return NotFound(); // Returner 404 hvis wetsuiten ikke findes
+        }
+
+        // Opdater værdierne fra det indsendte objekt
+        existingWetsuit.Price = wetsuit.Price;
+        existingWetsuit.Size = wetsuit.Size;
+        existingWetsuit.Gender = wetsuit.Gender;
+        existingWetsuit.Booking = wetsuit.Booking; // Opdater BookingId, hvis nødvendigt
+
+        await appDbContext.SaveChangesAsync(); // Gem ændringerne i databasen
+
+        return NoContent(); // 204 No Content
+    }
 }
 
 

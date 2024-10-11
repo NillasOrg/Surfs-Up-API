@@ -1,6 +1,20 @@
-﻿using Azure.Core;
+﻿using Surfs_Up_API.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace Surfs_Up_API.Models;
+namespace Surfs_Up_API.Models
+{
+    public class Wetsuit : ICartItem
+    {
+        public int WetsuitId { get; set; }
+
+        public double Price { get; set; } = 149;
+
+        [Required] public SIZES Size { get; set; } = Wetsuit.SIZES.M;
+
+        public Booking Booking { get; set; } //denne linje refererer til Booking
+
+        [Required]
+        public GENDER Gender { get; set; }
 
 public class Wetsuit : ICartItem
 {
@@ -11,7 +25,9 @@ public class Wetsuit : ICartItem
     public List<Booking>? Bookings { get; set; }
 }
 
-public enum Gender
-{
-    Male, Female
+        public enum SIZES
+        {
+            XS, S, M, L, XL, XXL, XXXL
+        }
+    }
 }

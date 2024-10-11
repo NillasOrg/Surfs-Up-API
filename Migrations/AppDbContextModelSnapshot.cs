@@ -201,6 +201,7 @@ namespace Surfs_Up_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
@@ -356,11 +357,11 @@ namespace Surfs_Up_API.Migrations
 
             modelBuilder.Entity("Surfs_Up_API.Models.Wetsuit", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("WetsuitId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WetsuitId"));
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
@@ -371,7 +372,7 @@ namespace Surfs_Up_API.Migrations
                     b.Property<int>("Size")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("WetsuitId");
 
                     b.ToTable("Wetsuits");
                 });
