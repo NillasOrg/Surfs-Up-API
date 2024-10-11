@@ -15,16 +15,10 @@ namespace Surfs_Up_API.Models
 
         [Required]
         public GENDER Gender { get; set; }
-
-public class Wetsuit : ICartItem
-{
-    public int Id { get; set; }
-    public double Price { get; set; } = 110;
-    public int Size { get; set; }
-    public Gender Gender { get; set; }
-    public List<Booking>? Bookings { get; set; }
-}
-
+        public enum GENDER
+        {
+            Mand, Kvinde
+        }
         public enum SIZES
         {
             XS, S, M, L, XL, XXL, XXXL
