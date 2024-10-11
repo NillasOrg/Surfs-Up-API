@@ -31,7 +31,7 @@ namespace Surfs_Up_API.Controller
 
         //POST api/admin
         [HttpPost]
-        public async Task<IActionResult> LogError(Request failedRequest)
+        public async Task<IActionResult> UpdateFailedRequest(Request failedRequest)
         {
             Request? request = await _context.Requests.FirstOrDefaultAsync(x => x.IpAddress == failedRequest.IpAddress);
 

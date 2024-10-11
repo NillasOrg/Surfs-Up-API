@@ -94,7 +94,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("MVC");
 app.UseCors("MobileApp");
-app.UseAPILog();
+app.UseRequestLog();
 
 app.Run();
 

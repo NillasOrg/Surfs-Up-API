@@ -84,7 +84,7 @@ public class RequestMiddleware
 
 public static class APILogMiddlewareExtensions
 {
-    public static IApplicationBuilder UseAPILog(this IApplicationBuilder builder)
+    public static IApplicationBuilder UseRequestLog(this IApplicationBuilder builder)
     {
         return builder.UseMiddleware<RequestMiddleware>();
     }
