@@ -12,8 +12,8 @@ using Surfs_Up_API.Data;
 namespace Surfs_Up_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241004091506_initial")]
-    partial class initial
+    [Migration("20241009110840_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -43,6 +43,19 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MVC", policyBuilder =>
+    {
+        policyBuilder.WithOrigins("https://localhost:7128");
+    });
+
+    options.AddPolicy("MobileApp", policyBuilder =>
+    {
+        policyBuilder.WithOrigins("https://localhost:9999");
+    });
+});
+
 
 var app = builder.Build();
 
@@ -65,6 +78,8 @@ app.UseHttpsRedirection();
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("MVC");
+app.UseCors("MobileApp");
 
 app.Run();
 
