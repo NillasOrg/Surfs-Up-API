@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Surfs_Up_API.Models;
-using static Surfs_Up_API.Models.Request;
 
 namespace Surfs_Up_API.Data;
 

@@ -1,7 +1,9 @@
-﻿using Surfs_Up_API.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Surfs_Up_API.Data;
 using Surfs_Up_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace Surfs_Up_API.Controller
 {
@@ -10,6 +12,7 @@ namespace Surfs_Up_API.Controller
     public class UserController : ControllerBase
     {
         private readonly AppDbContext appDbContext;
+
         public UserController(AppDbContext dbContext)
         {
             appDbContext = dbContext;
@@ -23,56 +26,21 @@ namespace Surfs_Up_API.Controller
             return Ok(users);
         }
 
-        //GET by ID /api/user/{id}
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        //GET by ID /api/user
+        [HttpGet("{email}"), Authorize]
+        public async Task<IActionResult> GetUser(string email)
         {
-            User user = await appDbContext.Users.FindAsync(id);
+            User? user = await appDbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
             if (user == null)
             {
+                Console.WriteLine("Shit");
                 return NotFound();
             }
+            
+            var loggedInUserName = User?.Identity?.Name;
+            Console.WriteLine(loggedInUserName);
+
             return Ok(user);
-        }
-
-        //POST api/user
-        [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody] User user)
-        {
-            await appDbContext.Users.AddAsync(user);
-            await appDbContext.SaveChangesAsync();
-
-            return Ok($"Created User ID: {user.Id}");
-        }
-
-        //PUT api/user/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
-        {
-            User userToUpdate = await appDbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
-            if (userToUpdate == null)
-            {
-                return NotFound();
-            }
-            userToUpdate.Name = user.Name;
-            userToUpdate.Email = user.Email;
-
-            await appDbContext.SaveChangesAsync();
-            return Ok($"Updated User ID: {user.Id}");
-        }
-
-        //DELETE api/user/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            User user = await appDbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            await appDbContext.SaveChangesAsync();
-            return Ok($"Deleted User ID: {user.Id}");
         }
     }
 }
