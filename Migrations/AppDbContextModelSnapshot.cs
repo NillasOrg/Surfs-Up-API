@@ -231,7 +231,12 @@ namespace Surfs_Up_API.Migrations
                     b.Property<int>("SuccessfulRequests")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Requests");
                 });
@@ -457,6 +462,15 @@ namespace Surfs_Up_API.Migrations
                 });
 
             modelBuilder.Entity("Surfs_Up_API.Models.Booking", b =>
+                {
+                    b.HasOne("Surfs_Up_API.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Surfs_Up_API.Models.Request", b =>
                 {
                     b.HasOne("Surfs_Up_API.Models.User", "User")
                         .WithMany()

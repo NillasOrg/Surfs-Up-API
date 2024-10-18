@@ -74,6 +74,5 @@ app.UseHttpsRedirection();
 app.MapIdentityApi<User>();
 app.UseCors("MVC");
 app.UseCors("MobileApp");
-app.UseRequestLog();
 app.MapControllers();
 app.Run();

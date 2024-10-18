@@ -33,13 +33,9 @@ namespace Surfs_Up_API.Controller
             User? user = await appDbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
             if (user == null)
             {
-                Console.WriteLine("Shit");
                 return NotFound();
             }
             
-            var loggedInUserName = User?.Identity?.Name;
-            Console.WriteLine(loggedInUserName);
-
             return Ok(user);
         }
     }
