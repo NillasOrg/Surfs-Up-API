@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Surfs_Up_API.Data;
 
@@ -11,9 +12,11 @@ using Surfs_Up_API.Data;
 namespace Surfs_Up_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241017185858_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -231,12 +234,7 @@ namespace Surfs_Up_API.Migrations
                     b.Property<int>("SuccessfulRequests")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Requests");
                 });
@@ -310,7 +308,6 @@ namespace Surfs_Up_API.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -462,15 +459,6 @@ namespace Surfs_Up_API.Migrations
                 });
 
             modelBuilder.Entity("Surfs_Up_API.Models.Booking", b =>
-                {
-                    b.HasOne("Surfs_Up_API.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Surfs_Up_API.Models.Request", b =>
                 {
                     b.HasOne("Surfs_Up_API.Models.User", "User")
                         .WithMany()

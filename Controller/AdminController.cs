@@ -25,24 +25,55 @@ namespace Surfs_Up_API.Controller
         [HttpGet]
         public async Task<IActionResult> GetAllRequests()
         {
-            List<Request> requests = await _context.Requests.ToListAsync();
+            List<Request> requests = await _context.Requests
+                .Include(x => x.User)
+                .ToListAsync();
             return Ok(requests);
         }
 
         //POST api/admin
-        [HttpPost]
+        [HttpPost("failed")]
         public async Task<IActionResult> UpdateFailedRequest(Request failedRequest)
         {
-            Request? request = await _context.Requests.FirstOrDefaultAsync(x => x.IpAddress == failedRequest.IpAddress);
+            Request? request = null;
+            if (failedRequest.User != null)
+                request = await _context.Requests.FirstOrDefaultAsync(x => x.IpAddress == failedRequest.IpAddress && x.User.Email == failedRequest.User.Email);               
+            
+            else
+                request = await _context.Requests.FirstOrDefaultAsync(x => x.IpAddress == failedRequest.IpAddress && x.User == null);
+            
 
-            if (request != null)
+            if (request == null)
             {
-                request.FailedRequests++;
-
-                await _context.SaveChangesAsync();
-
+                request = failedRequest;
+                _context.Requests.Add(request);
             }
+            
+            request.FailedRequests++;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+        
+        //POST api/admin
+        [HttpPost("success")]
+        public async Task<IActionResult> UpdateSuccessfulRequest(Request successRequest)
+        {
+            Request? request = null;
+            if (successRequest.User != null)
+                request = await _context.Requests.FirstOrDefaultAsync(x => x.IpAddress == successRequest.IpAddress && x.User.Email == successRequest.User.Email);               
+            
+            else
+                request = await _context.Requests.FirstOrDefaultAsync(x => x.IpAddress == successRequest.IpAddress && x.User == null);
+            
 
+            if (request == null)
+            {
+                request = successRequest;
+                _context.Requests.Add(request);
+            }
+            
+            request.SuccessfulRequests++;
+            await _context.SaveChangesAsync();
             return Ok();
         }
     }
